@@ -1,4 +1,4 @@
-const db = require("../models/database");
+const db = require("../config/database");
 const config = require("../config/auth.config");
 const { user: User, role: Role, refreshToken: RefreshToken } = db;
 require('dotenv').config()

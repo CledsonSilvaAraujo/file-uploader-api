@@ -1,6 +1,6 @@
 // index.js
 const express = require('express');
-const sequelize = require('./app/models/database');
+const sequelize = require('./app/config/database');
 const authRoutes = require('./app/routes/auth.routes');
 const productRoutes = require('./app/routes/product.routes');
 const uploadRoutes = require('./app/routes/upload.routes');

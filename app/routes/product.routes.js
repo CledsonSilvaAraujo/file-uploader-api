@@ -2,23 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/product.model');
-
-const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
-  }
-
-  jwt.verify(token, 'your_secret_key', (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Invalid token' });
-    }
-
-    req.userId = decoded.userId;
-    next();
-  });
-};
+const authMiddleware = require('../middleware/authJwt');
 
 router.get('/', authMiddleware, async (req, res) => {
   const products = await Product.findAll();
