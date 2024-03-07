@@ -1,4 +1,4 @@
 Faça a instalação dos pacotes
-´npm i´
+´ npm i ´
 Inicie a API
-´node server.js´
+´ node server.js ´
