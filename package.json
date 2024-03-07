@@ -1,7 +1,7 @@
 {
-  "name": "jwt-authentication-postgresql",
+  "name": "file-upload-api",
   "version": "1.0.0",
-  "description": "Node.js demo for JWT Authentication with PostgreSQL database",
+  "description": "Api para upload de arquivos com autenticação jwt e banco de dados postgresql",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
