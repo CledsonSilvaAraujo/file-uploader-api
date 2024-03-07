@@ -1,117 +1,20 @@
-const jwt = require("jsonwebtoken");
-const config = require("../config/auth.config.js");
-const db = require("../models/database.js");
-require('dotenv').config()
-const User = db.user;
+const jwt = require('jsonwebtoken');
 
-const { TokenExpiredError } = jwt;
-
-isAdmin = (req, res, next) => {
-  User.findByPk(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "admin") {
-          next();
-          return;
-        }
-      }
-
-      res.status(403).send({
-        message: "Require Admin Role!"
-      });
-      return;
-    });
-  });
-};
-
-isModerator = (req, res, next) => {
-  User.findByPk(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
-          next();
-          return;
-        }
-      }
-
-      res.status(403).send({
-        message: "Require Moderator Role!"
-      });
-    });
-  });
-};
-
-isModeratorOrAdmin = (req, res, next) => {
-  User.findByPk(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
-          next();
-          return;
-        }
-
-        if (roles[i].name === "admin") {
-          next();
-          return;
-        }
-      }
-
-      res.status(403).send({
-        message: "Require Moderator or Admin Role!"
-      });
-    });
-  });
-};
-
-const catchError = (err, res) => {
-  if (err instanceof TokenExpiredError) {
-    return res.status(401).send({ message: "Unauthorized! Access Token was expired!" });
-  }
-
-  return res.sendStatus(401).send({ message: "Unauthorized!" });
-}
-
-let verifyToken = (req, res, next) => {
-  let token = req.headers[process.env.JWT_HEADER_KEY];
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization;
 
   if (!token) {
-    return res.status(403).send({ message: "No token provided!" });
+    return res.status(401).json({ message: 'No token provided' });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, 'your_secret_key', (err, decoded) => {
     if (err) {
-      return catchError(err, res);
+      return res.status(401).json({ message: 'Invalid token' });
     }
-    req.userId = decoded.id;
+
+    req.userId = decoded.userId;
     next();
   });
 };
 
-verifyToken = (req, res, next) => {
-  let token = req.headers[process.env.JWT_HEADER_KEY];
-
-  if (!token) {
-    return res.status(403).send({
-      message: "No token provided!"
-    });
-  }
-
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err) {
-      return res.status(401).send({
-        message: "Unauthorized!"
-      });
-    }
-    req.userId = decoded.id;
-    next();
-  });
-};
-
-const authJwt = {
-  verifyToken: verifyToken,
-  isAdmin: isAdmin,
-  isModerator: isModerator,
-  isModeratorOrAdmin: isModeratorOrAdmin
-};
-
-module.exports = authJwt;
+module.exports = authMiddleware;

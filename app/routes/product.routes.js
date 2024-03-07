@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/product.model');
 
-// Middleware de autenticação
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization;
 
